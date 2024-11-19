@@ -82,6 +82,9 @@ helm install -n argo nginx-ingress ingress-nginx/ingress-nginx
 kubectl get deployment -n argo nginx-ingress-ingress-nginx-controller
 kubectl get service -n argo nginx-ingress-ingress-nginx-controller
 
+#Create the ingress controller
+kubectl apply -f client-ingress.yaml
+
 # if you get the below error
 # internal error occurred: failed calling webhook "validate.nginx.ingress.kubernetes.io"
 
@@ -116,3 +119,12 @@ ARGO_TOKEN="Bearer $(kubectl get secret -n argo demo-sa.service-account-token -o
 echo $ARGO_TOKEN
 
 #paste the token in login page of ingress argo ui
+
+#using gcp cloudsdk image
+
+docker pull google/cloud-sdk:latest
+docker tag google/cloud-sdk:latest us-central1-docker.pkg.dev/emerald-vigil-428902-v5/demo-images/google/cloud-sdk:latest
+docker push us-central1-docker.pkg.dev/emerald-vigil-428902-v5/demo-images/google/cloud-sdk:latest
+
+
+#bq load --source_format=CSV --location 'us-central1' --project_id emerald-vigil-428902-v5 emerald-vigil-428902-v5:demo_dataset.demo_data gs://deloitte-s-n-a-demo-bkt/demo_data.csv id:STRING,value:STRING,desc:STRING

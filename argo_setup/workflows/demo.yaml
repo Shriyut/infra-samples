@@ -1,0 +1,28 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  generateName: demo-workflow-
+  labels:
+    workflows.argoproj.io/archive-strategy: "false"
+spec:
+  entrypoint: demo-steps
+  serviceAccountName: argo
+  templates:
+    - name: demo-steps
+      steps:
+        - - name: load-csv-to-bq
+            template: load-data-from-gcs
+    - name: load-data-from-gcs
+      container:
+        name: main
+        image: us-central1-docker.pkg.dev/emerald-vigil-428902-v5/demo-images/google/cloud-sdk:latest
+        command:
+          - sh
+          - "-c"
+          -  |
+             /bin/bash << 'EOF'
+             gcloud config list
+             gcloud config set project emerald-vigil-428902-v5 --impersonate-service-account argo-sa@emerald-vigil-428902-v5.iam.gserviceaccount.com
+             bq load --source_format=CSV --schema=id:INT64,value:INT64,col1:STRING --location 'us-central1' --project_id emerald-vigil-428902-v5 emerald-vigil-428902-v5:demo_dataset.demo_data gs://deloitte-s-n-a-demo-bkt/demo_data.csv
+             bq query --nouse_legacy_sql 'CALL demo_dataset.sample_procedure();'
+             EOF
