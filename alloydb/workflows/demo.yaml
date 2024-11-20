@@ -1,0 +1,19 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  generateName: demo-workflow-
+  labels:
+    workflows.argoproj.io/archive-strategy: "false"
+spec:
+  entrypoint: demo-steps
+  serviceAccountName: argo
+  templates:
+    - name: demo-steps
+      steps:
+        - - name: read-from-alloydb
+            template: load-data-from-gcs
+    - name: load-data-from-gcs
+      container:
+        name: main
+        image: us-central1-docker.pkg.dev/emerald-vigil-428902-v5/demo-images/python/base@sha256:60f1fd8b7ff76e361a2d97c7eccb6a726d3060366c0da57e3a28aa4587cf30cb
+        command: ["python3", "/tmp/test.py"]
