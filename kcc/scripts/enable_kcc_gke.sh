@@ -1,5 +1,5 @@
 #For existing cluster
-expost CLUSTER_NAME='demo-kcc-cluster'
+export CLUSTER_NAME='demo-kcc-cluster'
 export REGION='us-central1'
 gcloud container clusters update CLUSTER_NAME \
     --update-addons ConfigConnector=ENABLED \
